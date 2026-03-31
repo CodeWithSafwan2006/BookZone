@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en" data-page="book-details">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Book Details — BookZone</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/lexi.css" />
+    <style>
+      .star-rating {
+        color: #ccc;
+        cursor: pointer;
+        font-size: 1.5rem;
+      }
+      .star-rating .ri-star-fill.active {
+        color: #ffc107;
+      }
+      .btn-read-online {
+        background-color: #ffffff !important;
+        color: #0d6efd !important;
+        border: 1px solid #0d6efd !important;
+        font-weight: 500;
+      }
+      .btn-buy-offline {
+        background-color: #0d6efd !important;
+        color: #ffffff !important;
+        border: none !important;
+        font-weight: 500;
+      }
+      .book-details-img {
+        max-height: 420px;
+        object-fit: contain;
+        background: #f8f9fa;
+        padding: 12px;
+      }
+
+      /* ✅ Fixed Review Button Styles */
+      .vote-btn {
+        border: none;
+        background: transparent !important;
+        color: #6c757d;
+        transition: all 0.2s ease;
+        padding: 2px 8px;
+        border-radius: 4px;
+        box-shadow: none !important;
+      }
+      .vote-btn i {
+        transition:
+          transform 0.15s ease,
+          color 0.15s ease;
+      }
+      .vote-btn:hover {
+        background: rgba(13, 110, 253, 0.1) !important;
+        color: #0d6efd;
+      }
+      .vote-btn.active {
+        color: #0d6efd !important;
+        font-weight: bold;
+      }
+      .vote-btn.active i {
+        transform: scale(1.1);
+      }
+      .verified-badge {
+        font-size: 0.65rem;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+      }
+    </style>
+  </head>
+  <body data-page="book-details">
+    <nav class="navbar navbar-expand-lg navbar-dark px-3 sticky-top">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <i class="ri-book-open-fill fs-4"></i>
+        <span>BookZone</span>
+      </a>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <button id="themeToggle" class="btn btn-link text-white p-0">
+          <i id="themeIcon" class="ri-moon-line fs-4"></i>
+        </button>
+        <a
+          href="checkout.html"
+          class="cart-wrapper position-relative d-flex align-items-center justify-content-center"
+        >
+          <div class="cart-glass-base">
+            <i class="ri-shopping-cart-2-fill fs-4 text-white"></i>
+            <span id="cartCount" class="cart-premium-badge">0</span>
+          </div>
+        </a>
+      </div>
+    </nav>
+
+    <div id="toastContainer"></div>
+
+    <section class="container py-5">
+      <div id="bookDetailsContainer"></div>
+      <hr class="my-5" id="detailsDivider" />
+      <div id="reviewsSection"></div>
+    </section>
+
+    <div class="modal fade" id="globalPopup" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header">
+            <h5 class="modal-title" id="popupTitle"></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body" id="popupMessage"></div>
+          <div class="modal-footer" id="popupActions"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="lexi-root">
+      <div id="lexi-overlay"></div>
+      <button id="lexi-bubble" aria-label="Open Lexi">💬</button>
+      <aside id="lexi-sidebar">
+        <div
+          class="lexi-header d-flex justify-content-between align-items-center"
+        >
+          <div class="d-flex align-items-center gap-2">
+            <i class="ri-robot-2-line fs-5"></i>
+            <span class="fw-bold">Lexi Assistant</span>
+          </div>
+          <div class="lexi-header-actions d-flex align-items-center gap-2">
+            <button
+              id="lexi-clear"
+              title="Clear Conversation"
+              class="btn btn-link p-0 text-white opacity-75 hover-opacity-100"
+            >
+              <i class="ri-delete-bin-line"></i>
+            </button>
+            <button
+              id="lexi-close"
+              title="Close Assistant"
+              class="btn btn-link p-0 text-white"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+        <div id="lexi-messages"></div>
+        <div class="lexi-input">
+          <input
+            type="text"
+            id="lexi-input"
+            placeholder="Ask me for a book or a deal..."
+            autocomplete="off"
+          />
+          <button id="lexi-send" title="Send Message">➤</button>
+        </div>
+      </aside>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/bookstore.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/lexi.js"></script>
+
+    <script>
+      let currentStars = 5;
+      let reviewSortLocked = false;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        const container = document.getElementById("bookDetailsContainer");
+        const divider = document.getElementById("detailsDivider");
+
+        if (!id) {
+          container.innerHTML = `<div class="text-center py-5"><h2 class="text-muted">No Book Specified</h2></div>`;
+          return;
+        }
+
+        const book = window.Bookstore.getBookById(id);
+        if (!book) {
+          container.innerHTML = `<div class="text-center py-5"><h2>Book Not Found</h2></div>`;
+          return;
+        }
+
+        const offer = JSON.parse(localStorage.getItem("bookzone_offer")) || {
+          active: false,
+          discount: 0,
+        };
+        const finalPrice =
+          book.offer && offer.active
+            ? Math.floor(book.price * (1 - offer.discount / 100))
+            : book.price;
+
+        container.innerHTML = `
+          <div class="row g-5 align-items-start animate__animated animate__fadeIn">
+            <div class="col-md-5 text-center d-flex align-items-center justify-content-center">
+    <div class="position-relative overflow-hidden book-details-wrapper">
+        <img src="${book.image}" 
+             class="img-fluid rounded shadow-soft book-details-img" 
+             onerror="this.src='assets/img/default-book.png'">
+    </div>
+</div>
+            <div class="col-md-7">
+              <h2 class="fw-bold mb-2 text-main">${book.title}</h2>
+              <p class="text-muted mb-2">by ${book.author}</p>
+              <h4 class="fw-bold mb-3 text-main">₹${finalPrice} ${finalPrice < book.price ? `<small class="text-muted text-decoration-line-through fs-6">₹${book.price}</small>` : ""}</h4>
+              <p class="mb-4 text-main lh-lg">${book.description || "Collection from BookZone."}</p>
+              <div class="d-flex gap-2">
+                  <button class="btn btn-primary rounded-pill px-5" onclick="Cart.addToCart('${book.id}'); UI.animateToCart(event, '${book.image}')">Add to Cart</button>
+              </div>
+            </div>
+          </div>
+        `;
+        renderReviews(id);
+      });
+
+      function renderReviews(bookId) {
+        const user = window.BookzoneAuth?.loadBookzoneUser();
+        const currentEmail = user ? user.email.toLowerCase() : null;
+        const allReviews =
+          JSON.parse(localStorage.getItem("bookzone_reviews")) || {};
+        let bookReviews = allReviews[bookId] || [];
+
+        // ✅ DATA CLEANUP
+        bookReviews.forEach((r, idx) => {
+          if (!r.id) r.id = "rev-" + (r.date || Date.now()) + "-" + idx;
+          if (!r.votes || typeof r.votes.up === "number")
+            r.votes = { up: [], down: [] };
+        });
+
+        const isVerified = (email) => {
+          if (!email) return false;
+          const history =
+            JSON.parse(localStorage.getItem(`orders_${email.toLowerCase()}`)) ||
+            [];
+          const targetTitle = window.Bookstore.getBookById(bookId)?.title;
+          return history.some((order) =>
+            order.items.some((item) => item.title === targetTitle),
+          );
+        };
+
+        if (!reviewSortLocked) {
+          bookReviews.sort(
+            (a, b) =>
+              b.votes.up.length -
+              b.votes.down.length -
+              (a.votes.up.length - a.votes.down.length),
+          );
+        }
+
+        let html = `<h4 class="fw-bold mb-3 text-main">User Reviews (${bookReviews.length})</h4>`;
+        if (user) {
+          html += `
+                <div class="mb-4 p-3 bg-elevated rounded shadow-sm border border-subtle">
+                    <div class="star-rating mb-2" id="starInput">
+                        <i class="ri-star-fill active" data-val="1"></i><i class="ri-star-fill active" data-val="2"></i>
+                        <i class="ri-star-fill active" data-val="3"></i><i class="ri-star-fill active" data-val="4"></i>
+                        <i class="ri-star-fill active" data-val="5"></i>
+                    </div>
+                    <textarea id="reviewText" class="form-control mb-2 themed-placeholder" placeholder="Share your experience..."></textarea>
+                    <button class="btn btn-primary btn-sm rounded-pill px-3" onclick="saveReview('${bookId}')">Submit Review</button>
+                </div>`;
+        }
+
+        html +=
+          bookReviews
+            .map((r) => {
+              const upActive =
+                currentEmail && r.votes.up.includes(currentEmail)
+                  ? "active"
+                  : "";
+              const downActive =
+                currentEmail && r.votes.down.includes(currentEmail)
+                  ? "active"
+                  : "";
+              const verified = isVerified(r.userEmail);
+
+              return `
+            <div class="border-bottom py-3">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="text-warning mb-1">${"★".repeat(r.stars)}${"☆".repeat(5 - r.stars)}</div>
+<div class="fw-bold text-main d-flex align-items-center gap-1">
+    ${r.userName} 
+${verified ? `
+  <span class="insta-badge-container">
+    <i class="ri-verified-badge-fill badge-base"></i>
+    <i class="ri-check-line badge-tick"></i>
+  </span>
+` : ""}
+</div>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center mt-2">
+                        <button class="vote-btn small ${upActive}" onclick="handleVote('${bookId}', '${r.id}', 'up')">
+                            <i class="${upActive ? "ri-thumb-up-fill" : "ri-thumb-up-line"}"></i> ${r.votes.up.length}
+                        </button>
+                        <button class="vote-btn small ${downActive}" onclick="handleVote('${bookId}', '${r.id}', 'down')">
+                            <i class="${downActive ? "ri-thumb-down-fill" : "ri-thumb-down-line"}"></i> ${r.votes.down.length}
+                        </button>
+                    </div>
+                </div>
+                <p class="text-secondary mt-2 mb-0 small lh-base">${r.text}</p>
+            </div>`;
+            })
+            .join("") || `<p class="text-muted py-3">No reviews yet.</p>`;
+
+        document.getElementById("reviewsSection").innerHTML = html;
+
+        // Stars binding
+        document.querySelectorAll("#starInput i").forEach((s) => {
+          s.onclick = function () {
+            currentStars = parseInt(this.dataset.val);
+            document
+              .querySelectorAll("#starInput i")
+              .forEach((i) =>
+                i.classList.toggle(
+                  "active",
+                  parseInt(i.dataset.val) <= currentStars,
+                ),
+              );
+          };
+        });
+      }
+
+      window.handleVote = function (bookId, reviewId, type) {
+        const user = window.BookzoneAuth.loadBookzoneUser();
+        if (!user) {
+          UI.showToast("Login to vote", "warning");
+          return;
+        }
+
+        const email = user.email.toLowerCase();
+        const allReviews =
+          JSON.parse(localStorage.getItem("bookzone_reviews")) || {};
+
+        if (!allReviews[bookId]) return;
+
+        const review = allReviews[bookId].find((r) => r.id === reviewId);
+
+        if (!review) return;
+
+        if (!review.votes || typeof review.votes.up === "number") {
+          review.votes = { up: [], down: [] };
+        }
+
+        const alreadyVoted = review.votes[type].includes(email);
+
+        review.votes.up = review.votes.up.filter((e) => e !== email);
+        review.votes.down = review.votes.down.filter((e) => e !== email);
+
+        if (!alreadyVoted) {
+          review.votes[type].push(email);
+        }
+
+        localStorage.setItem("bookzone_reviews", JSON.stringify(allReviews));
+        reviewSortLocked = true;
+        renderReviews(bookId);
+      };
+
+      window.saveReview = function (bookId) {
+        const text = document.getElementById("reviewText").value.trim();
+        const user = window.BookzoneAuth.loadBookzoneUser();
+        if (!text || !user) return;
+
+        const allReviews =
+          JSON.parse(localStorage.getItem("bookzone_reviews")) || {};
+        if (!allReviews[bookId]) allReviews[bookId] = [];
+        allReviews[bookId].unshift({
+          id:
+            "rev-" + Date.now() + "-" + Math.random().toString(36).substr(2, 5),
+          userName: user.name,
+          userEmail: user.email,
+          text,
+          stars: currentStars,
+          votes: { up: [], down: [] },
+          date: Date.now(),
+        });
+
+        reviewSortLocked = false;
+        localStorage.setItem("bookzone_reviews", JSON.stringify(allReviews));
+        renderReviews(bookId);
+        document.getElementById("reviewText").value = "";
+        UI.showToast("Review submitted!", "success");
+      };
+    </script>
+  </body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-page="checkout">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BookZone – Checkout</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/lexi.css" />
+  </head>
+
+  <body data-page="checkout">
+    <nav class="navbar navbar-expand-lg navbar-dark px-3 sticky-top"></nav>
+
+    <div id="toastContainer"></div>
+
+    <section class="container py-5">
+      <h2 class="fw-bold mb-4 text-main">Your Shopping Cart</h2>
+
+      <div class="row">
+        <div class="col-lg-8 text-center my-4">
+          <h4 class="fw-bold text-main">Order Summary</h4>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div id="checkoutSummary"></div>
+          <div id="recommendationsContainer"></div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="sticky-top" style="top: 100px; z-index: 10;">
+            <div class="card shadow-soft border-0 p-4 rounded-4 bg-elevated">
+              <div class="mb-3"> 
+                <label class="form-label small fw-bold text-muted text-uppercase ls-1">Apply Coupon</label>
+                <div class="input-group">
+                  <input id="couponInput" type="text" class="form-control" placeholder="e.g. GET20" />
+                  <button class="btn btn-primary px-3" type="button" onclick="Cart.applyCoupon()">
+                    <i class="ri-ticket-2-line"></i>
+                  </button>
+                </div>
+                <p class="small text-muted text-center mt-2 mb-1">
+                  Discounts are calculated automatically on subtotal.
+                </p>
+              </div>
+
+              <hr class="my-3 opacity-50">
+
+              <div id="cartTotals" class="mb-3"></div>
+
+              <p class="text-muted small text-center mt-1 mb-0">
+                <i class="ri-shield-check-line text-success"></i> 256-bit Secure Checkout
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="lexi-root">
+      <div id="lexi-overlay"></div>
+      <button id="lexi-bubble" aria-label="Open Lexi">💬</button>
+      <aside id="lexi-sidebar">
+        <div class="lexi-header d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-2">
+            <i class="ri-robot-2-line fs-5"></i>
+            <span class="fw-bold">Lexi Assistant</span>
+          </div>
+          <div class="lexi-header-actions d-flex align-items-center gap-2">
+            <button id="lexi-clear" title="Clear Conversation" class="btn btn-link p-0 text-white opacity-75 hover-opacity-100">
+              <i class="ri-delete-bin-line"></i>
+            </button>
+            <button id="lexi-close" title="Close Assistant" class="btn btn-link p-0 text-white">✕</button>
+          </div>
+        </div>
+        <div id="lexi-messages"></div>
+        <div class="lexi-input">
+          <input type="text" id="lexi-input" placeholder="Ask me for a book..." autocomplete="off" />
+          <button id="lexi-send" title="Send Message">➤</button>
+        </div>
+      </aside>
+    </div>
+
+    <div id="searchOverlay" class="search-overlay d-none">
+      <div class="search-box shadow-soft">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0 text-main">Search BookZone</h5>
+          <button class="btn-close" onclick="document.getElementById('searchOverlay').classList.add('d-none')"></button>
+        </div>
+        <div class="search-input-wrapper position-relative">
+          <i class="ri-search-line text-muted position-absolute start-0 top-50 translate-middle-y ms-3"></i>
+          <input type="text" id="searchInput" class="form-control ps-5" placeholder="Search books...">
+        </div>
+        <div id="searchResults" class="search-results mt-3"></div>
+      </div>
+    </div>
+
+    <footer class="p-4 text-center mt-5 text-muted small">
+      <p>© <span id="year"></span> BookZone — All Rights Reserved</p>
+    </footer>
+
+    <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 bg-elevated">
+          <div class="modal-header border-0">
+            <h5 class="modal-title fw-bold">Secure Payment</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <h5 class="fw-bold mb-3">Total Payable: <span id="modalTotalAmount">₹0</span></h5>
+            <p class="text-muted small mb-3">Finalize your purchase using your preferred method.</p>
+            
+            <div class="payment-options d-grid gap-2">
+              <div class="form-check card-select-box p-3 border rounded-3">
+                <input class="form-check-input" type="radio" name="payment" id="payCard" value="card" checked>
+                <label class="form-check-label w-100 fw-bold" for="payCard">
+                  <i class="ri-bank-card-line me-2"></i> Credit / Debit Card
+                </label>
+                <div class="mt-3 row g-2">
+                  <div class="col-12"><input type="text" class="form-control form-control-sm" placeholder="16 Digit Card Number"></div>
+                  <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="MM/YYYY"></div>
+                  <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="CVV"></div>
+                </div>
+              </div>
+
+              <div class="form-check card-select-box p-3 border rounded-3">
+                <input class="form-check-input" type="radio" name="payment" id="payUPI" value="upi">
+                <label class="form-check-label w-100 fw-bold" for="payUPI">
+                  <i class="ri-qr-code-line me-2"></i> UPI / QR Code
+                </label>
+              </div>
+
+              <div class="form-check card-select-box p-3 border rounded-3">
+                <input class="form-check-input" type="radio" name="payment" id="payCOD" value="cod">
+                <label class="form-check-label w-100 fw-bold" for="payCOD">
+                  <i class="ri-truck-line me-2"></i> Cash on Delivery
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0 d-grid gap-2">
+            <button type="button" class="btn btn-success w-100 py-2 fw-bold" onclick="Cart.completeCheckout()">Complete Order</button>
+            <button type="button" class="btn btn-outline-secondary w-100 py-2" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="globalPopup" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold" id="popupTitle"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="popupMessage"></div>
+          <div class="modal-footer border-0 pt-0">
+            <div id="popupActions" class="w-100 d-grid gap-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/bookstore.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/lexi.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            if (window.UI) {
+                UI.syncNavbar();
+                UI.updateCartCount();
+            }
+            if (window.Cart) {
+                Cart.renderCheckoutSummary();
+            }
+            // Sync current year
+            document.getElementById('year').textContent = new Date().getFullYear();
+        });
+    </script>
+  </body>
+</html>

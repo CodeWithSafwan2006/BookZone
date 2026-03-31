@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Comic Series — BookZone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin crossOrigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    
+    <style>
+        .star-rating { color: #ccc; cursor: pointer; font-size: 1.5rem; }
+        .star-rating .ri-star-fill.active { color: #ffc107; }
+        /* ✅ Premium Review Styles */
+        .vote-btn { border: none; background: transparent !important; color: #6c757d; transition: all 0.2s ease; padding: 2px 8px; border-radius: 4px; box-shadow: none !important; }
+        .vote-btn i { transition: transform 0.15s ease, color 0.15s ease; }
+        .vote-btn:hover { background: rgba(13, 110, 253, 0.1) !important; color: #0d6efd; }
+        .vote-btn.active { color: #0d6efd !important; font-weight: bold; }
+        .vote-btn.active i { transform: scale(1.1); }
+    </style>
+</head>
+
+<body data-page="comics-series">
+    <nav class="navbar navbar-expand-lg navbar-dark px-3 sticky-top"></nav>
+
+    <div id="toastContainer"></div>
+
+    <div class="container py-4">
+        <div id="seriesHeader" class="mb-4"></div>
+
+        <h4 class="fw-bold mb-3 text-main">Volumes</h4>
+        <div class="row g-4" id="volumesContainer"></div>
+        <hr class="my-5">
+        <div id="comicReviewsSection"></div>
+    </div>
+
+    <div id="searchOverlay" class="search-overlay d-none"></div>
+
+    <div class="modal fade" id="globalPopup" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="popupTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="popupMessage"></div>
+                <div class="modal-footer" id="popupActions"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="p-4 text-center">
+        <p>© <span id="year"></span> BookZone — All Rights Reserved</p>
+    </footer>
+
+    <button id="backToTop">
+        <i class="ri-arrow-up-line"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/bookstore.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/ui.js"></script>
+
+    <script>
+        let currentStars = 5;
+        let reviewSortLocked = false; 
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            const seriesId = params.get("seriesId");
+            const series = Bookstore.getComicSeriesById(seriesId);
+
+            if (!series) {
+                document.body.innerHTML = "<p class='text-center p-5 text-main'>Series not found</p>";
+                return;
+            }
+
+            const adminBooks = JSON.parse(localStorage.getItem("bookzone_books")) || [];
+            const adminData = adminBooks.find(b => b.id === series.id);
+            const isAvailable = adminData ? adminData.available !== false : true;
+
+            if (window.UI && UI.syncNavbar) UI.syncNavbar();
+            if (window.UI && UI.injectBackButton) UI.injectBackButton();
+
+            document.getElementById("seriesHeader").innerHTML = `
+                <div class="d-flex flex-column flex-md-row gap-4 align-items-md-center mt-3">
+                    <img src="${series.image}" style="width:160px; object-fit:contain;" class="rounded shadow-soft">
+                    <div class="flex-grow-1">
+                        <h2 class="fw-bold text-main">${series.title}</h2>
+                        <p class="text-muted mb-1">${series.author}</p>
+                        <p class="mb-3 text-main">${series.description || "Popular comic series."}</p>
+                        <button id="buySeriesBtn" class="btn ${isAvailable ? 'btn-danger' : 'btn-secondary disabled'} btn-pill px-4">
+                            ${isAvailable ? 'Buy Full Series • ₹' + series.totalPrice : 'Series Currently Unavailable'}
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            if (isAvailable) {
+                document.getElementById("buySeriesBtn").onclick = (event) => {
+                    Cart.addToCart(`series:${series.id}`, 1);
+                    if(window.UI && UI.animateToCart) UI.animateToCart(event, series.image);
+                };
+            }
+
+            const container = document.getElementById("volumesContainer");
+            container.innerHTML = series.volumes.map(v => `
+                <div class="col-6 col-md-4 col-lg-3">
+                    <div class="card h-100 border-0 shadow-soft book-card">
+                        <div class="position-relative overflow-hidden">
+                            <img src="${v.image}" class="card-img-top" alt="${v.title}">
+                        </div>
+                        <div class="card-body p-3 d-flex flex-column text-start">
+                            <h6 class="fw-bold text-truncate mb-1 text-main">${v.title}</h6>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="fw-bold text-primary">
+                                    ${isAvailable ? '₹' + v.price : '<span class="text-danger small">Unavailable</span>'}
+                                </span>
+                                <button class="btn ${isAvailable ? 'btn-primary' : 'btn-secondary'} btn-sm rounded-pill px-3"
+                                    onclick="event.stopPropagation(); if(${isAvailable}) { Cart.addToCart('${v.volumeId}', 1); UI.animateToCart(event, '${v.image}'); }">
+                                    Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+            
+            renderComicReviews(seriesId);
+        });
+
+        function renderComicReviews(seriesId) {
+            const user = window.BookzoneAuth?.loadBookzoneUser();
+            const currentEmail = user ? user.email.toLowerCase() : null;
+            const allReviews = JSON.parse(localStorage.getItem("bookzone_comic_reviews")) || {};
+            let reviews = allReviews[seriesId] || [];
+
+            // ✅ DATA MIGRATION: Ensure unique IDs and vote arrays exist
+            reviews.forEach((r, idx) => {
+                if (!r.id) r.id = "crev-" + (r.date || Date.now()) + "-" + idx;
+                if (!r.votes || typeof r.votes.up === "number") r.votes = { up: [], down: [] };
+            });
+
+            // ✅ SMART SORTING: Locked during voting
+            if (!reviewSortLocked) {
+                reviews.sort((a, b) => (b.votes.up.length - b.votes.down.length) - (a.votes.up.length - a.votes.down.length));
+            }
+
+            let html = `<h4 class="fw-bold mb-3 text-main">Community Reviews (${reviews.length})</h4>`;
+
+            if (user) {
+                html += `
+                    <div class="mb-4 p-3 bg-elevated rounded shadow-sm border border-subtle">
+                        <div class="star-rating mb-2" id="starInput">
+                            <i class="ri-star-fill active" data-val="1"></i><i class="ri-star-fill active" data-val="2"></i>
+                            <i class="ri-star-fill active" data-val="3"></i><i class="ri-star-fill active" data-val="4"></i>
+                            <i class="ri-star-fill active" data-val="5"></i>
+                        </div>
+                        <textarea id="comicReviewText" class="form-control mb-2 themed-placeholder"
+                            placeholder="Share your thoughts about the volumes..."></textarea>
+                        <button class="btn btn-primary btn-sm rounded-pill px-3"
+                            onclick="saveComicReview('${seriesId}')">
+                            Post Review
+                        </button>
+                    </div>
+                `;
+            }
+
+            html += reviews.map(r => {
+                const upActive = currentEmail && r.votes.up.includes(currentEmail) ? 'active' : '';
+                const downActive = currentEmail && r.votes.down.includes(currentEmail) ? 'active' : '';
+
+                return `
+                <div class="border-bottom py-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="text-warning mb-1">${'★'.repeat(r.stars || 5)}${'☆'.repeat(5 - (r.stars || 5))}</div>
+                            <div class="fw-bold text-main">${r.userName}</div>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center mt-2">
+                            <span class="small text-muted d-none d-md-inline">Was this helpful?</span>
+                            <button class="vote-btn small ${upActive}" onclick="handleComicVote('${seriesId}', '${r.id}', 'up')">
+                                <i class="${upActive ? 'ri-thumb-up-fill' : 'ri-thumb-up-line'}"></i> ${r.votes.up.length}
+                            </button>
+                            <button class="vote-btn small ${downActive}" onclick="handleComicVote('${seriesId}', '${r.id}', 'down')">
+                                <i class="${downActive ? 'ri-thumb-down-fill' : 'ri-thumb-down-line'}"></i> ${r.votes.down.length}
+                            </button>
+                        </div>
+                    </div>
+                    <p class="small text-secondary mb-0 mt-1 lh-base">${r.text}</p>
+                </div>`;
+            }).join("") || `<p class="text-muted py-3">No reviews yet.</p>`;
+
+            document.getElementById("comicReviewsSection").innerHTML = html;
+
+            // ✅ Star Selection Logic
+            document.querySelectorAll("#starInput i").forEach(s => {
+                s.onclick = function() {
+                    currentStars = parseInt(this.dataset.val);
+                    document.querySelectorAll("#starInput i").forEach(i => 
+                        i.classList.toggle("active", parseInt(i.dataset.val) <= currentStars)
+                    );
+                }
+            });
+        }
+
+        window.handleComicVote = function(seriesId, reviewId, type) {
+            const user = window.BookzoneAuth.loadBookzoneUser();
+            if (!user) { UI.showToast("Please login to vote", "warning"); return; }
+
+            const email = user.email.toLowerCase();
+            const allReviews = JSON.parse(localStorage.getItem("bookzone_comic_reviews")) || {};
+            const reviews = allReviews[seriesId] || [];
+            
+            const review = reviews.find(r => r.id === reviewId);
+            if (!review) return;
+
+            const alreadyVoted = review.votes[type].includes(email);
+
+            review.votes.up = review.votes.up.filter(e => e !== email);
+            review.votes.down = review.votes.down.filter(e => e !== email);
+
+            if (!alreadyVoted) {
+                review.votes[type].push(email);
+            }
+
+            localStorage.setItem("bookzone_comic_reviews", JSON.stringify(allReviews));
+            reviewSortLocked = true; 
+            renderComicReviews(seriesId);
+        };
+
+        function saveComicReview(seriesId) {
+            const user = window.BookzoneAuth.loadBookzoneUser();
+            const text = document.getElementById("comicReviewText").value.trim();
+            if (!user || !text) return;
+
+            const allReviews = JSON.parse(localStorage.getItem("bookzone_comic_reviews")) || {};
+            if (!allReviews[seriesId]) allReviews[seriesId] = [];
+
+            allReviews[seriesId].unshift({
+                id: "crev-" + Date.now() + "-" + Math.random().toString(36).substr(2, 5),
+                userName: user.name,
+                userEmail: user.email,
+                text,
+                stars: currentStars,
+                votes: { up: [], down: [] },
+                date: Date.now()
+            });
+
+            reviewSortLocked = false; 
+            localStorage.setItem("bookzone_comic_reviews", JSON.stringify(allReviews));
+            renderComicReviews(seriesId);
+            document.getElementById("comicReviewText").value = "";
+            UI.showToast("Review posted successfully!", "success");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en" data-page="admin">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BookZone – Admin Panel</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+
+    <style>
+      /* ✅ FIX: Robust Admin Session Flash Prevention */
+      body { visibility: hidden; opacity: 0; transition: opacity 0.3s ease; }
+      body.admin-verified { visibility: visible; opacity: 1; }
+      
+      #adminSearchResults {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid var(--border-subtle);
+        background: var(--bg-elevated);
+        z-index: 1050;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        border-radius: 12px;
+      }
+      .hover-bg:hover { 
+        background-color: rgba(37, 99, 235, 0.05); 
+        border-left: 3px solid var(--accent-main);
+      }
+      .ls-1 { letter-spacing: 0.5px; }
+      .extra-small { font-size: 0.7rem; }
+
+      /* ✅ ADMIN TOGGLE STYLING */
+      .form-switch .form-check-input {
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%230d6efd'/%3e%3c/svg%3e") !important;
+          background-color: #f1f5f9;
+          border: 2px solid #cbd5e1 !important;
+          width: 3rem !important;
+          height: 1.5rem !important;
+          cursor: pointer;
+      }
+      .form-switch .form-check-input:checked {
+          background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='white'/%3e%3c/svg%3e") !important;
+          background-color: #0d6efd !important;
+          border-color: #0d6efd !important;
+      }
+      
+      body.dark-mode .input-group-text {
+          background-color: var(--bg-soft-muted) !important;
+          border-color: var(--border-subtle) !important;
+          color: var(--text-main) !important;
+      }
+
+      #adminReviewContent {
+        max-height: 500px;
+        overflow-y: auto;
+        padding-right: 5px;
+      }
+      #adminReviewContent::-webkit-scrollbar { width: 4px; }
+      #adminReviewContent::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 10px; }
+
+      /* ✅ FIX: Remove underline from Admin Delete Button */
+      #deleteCurrentBtn { text-decoration: none !important; border: none !important; }
+    </style>
+
+    <script>
+      /* ✅ BLOCK UNAUTHORIZED FLASHING (Executes before body renders) */
+      (function() {
+        const user = JSON.parse(localStorage.getItem("bookzone_user"));
+        if (!user || !user.isAdmin) {
+          window.location.replace("index.html");
+        } else {
+          document.documentElement.classList.add('admin-ready');
+          window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.add('admin-verified');
+          });
+        }
+      })();
+    </script>
+  </head>
+
+  <body data-page="admin">
+    <nav class="navbar navbar-expand-lg navbar-dark px-3 sticky-top"></nav>
+
+    <div id="toastContainer"></div>
+
+    <section class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="fw-bold text-main mb-0">Admin Dashboard</h2>
+          <span class="badge bg-primary px-3 py-2 rounded-pill">Authenticated Administrator</span>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="card shadow-soft border-0 p-4 rounded-4 bg-elevated mb-4">
+            <h5 class="fw-bold mb-3 text-main"><i class="ri-mickey-line me-2 text-primary"></i>Festival Offer</h5>
+            <div class="mb-3">
+              <label class="extra-small fw-bold text-uppercase text-muted ls-1 mb-1">Select Event</label>
+              <select id="globalFestivalSelect" class="form-select form-select-sm mb-3">
+                <option value="">No Festival (Default 3%)</option>
+                <option value="diwali">Diwali</option>
+                <option value="christmas">Christmas</option>
+                <option value="newyear">New Year</option>
+                <option value="holi">Holi</option>
+                <option value="eid">Eid</option>
+              </select>
+              <div class="d-grid gap-2">
+                <button id="activateFestivalBtn" class="btn btn-primary btn-sm rounded-pill py-2">Activate Offer</button>
+                <button id="deactivateFestivalBtn" class="btn btn-outline-danger btn-sm rounded-pill py-2">Deactivate</button>
+              </div>
+            </div>
+            <p class="text-muted extra-small mb-0">* Discount applied globally across store.</p>
+          </div>
+
+          <div class="card shadow-soft border-0 rounded-4 bg-elevated overflow-hidden mb-4">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-1 text-main"><i class="ri-coupon-line me-2 text-primary"></i>Promotion Manager</h5>
+                <p class="text-muted extra-small mb-0 ls-1 text-uppercase">Control Store Coupons</p>
+            </div>
+            <div class="card-body p-4">
+                <div class="bg-light p-3 rounded-3 mb-3 border border-subtle">
+                    <label class="extra-small fw-bold text-uppercase text-muted ls-1 d-block mb-2">Create New Coupon</label>
+                    <div class="input-group input-group-sm mb-2">
+                        <input type="text" id="newCouponCode" class="form-control themed-placeholder" placeholder="Code (SAVE50)">
+                        <input type="number" id="newCouponDiscount" class="form-control" placeholder="%" style="max-width: 60px;">
+                        <button class="btn btn-primary" onclick="Admin.createNewCoupon()"><i class="ri-add-line"></i></button>
+                    </div>
+                </div>
+                <div id="adminCouponList" class="d-grid gap-3"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <div class="card shadow-soft border-0 p-4 rounded-4 bg-elevated mb-4 position-relative">
+            <h5 class="fw-bold mb-3 text-main"><i class="ri-search-eye-line me-2 text-primary"></i>Inventory Search</h5>
+            <div class="input-group">
+              <span class="input-group-text bg-transparent border-end-0"><i class="ri-search-line"></i></span>
+              <input type="text" class="form-control border-start-0" placeholder="Search book title or author..." oninput="AdminSearch.handleInput(this.value)">
+            </div>
+            <div id="adminSearchResults" class="position-absolute w-100 rounded mt-2 d-none shadow-lg" style="left:0; top:100%;"></div>
+          </div>
+
+          <div class="card shadow-soft border-0 rounded-4 bg-elevated overflow-hidden mb-4">
+            <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0 text-main"><i class="ri-shield-check-line me-2 text-primary"></i>Live Status Manager</h5>
+                <input type="hidden" id="bookId" />
+            </div>
+
+            <div class="card-body p-4">
+              <form id="bookForm">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-7">
+                        <label class="extra-small fw-bold text-uppercase text-muted ls-1 mb-1">Book Title</label>
+                        <input id="bookTitle" class="form-control bg-light fw-semibold" readonly placeholder="Select a book above...">
+                    </div>
+                    <div class="col-md-5">
+                        <label class="extra-small fw-bold text-uppercase text-muted ls-1 mb-1">Category</label>
+                        <input id="bookCategory" class="form-control bg-light fw-medium" readonly>
+                    </div>
+                </div>
+
+                <div class="bg-primary bg-opacity-10 rounded-4 p-4 border border-primary border-opacity-25 mb-4">
+                    <div class="form-check form-switch d-flex align-items-center justify-content-between ps-0">
+                        <div>
+                            <label class="form-check-label fw-bold text-main d-block fs-6" for="bookAvailable">Visible to Public</label>
+                            <span class="text-muted extra-small">Toggle off to temporarily hide book from store.</span>
+                        </div>
+                        <input class="form-check-input ms-0" type="checkbox" role="switch" id="bookAvailable" checked>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                  <button type="submit" class="btn btn-primary py-2 fw-bold rounded-pill shadow-sm">
+                    <i class="ri-save-line me-1"></i> Sync Inventory Changes
+                  </button>
+                </div>
+
+                <div class="d-none">
+                    <input id="bookAuthor">
+                    <input id="bookPrice" type="number">
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="card shadow-soft border-0 rounded-4 bg-elevated overflow-hidden">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-1 text-main"><i class="ri-message-3-line me-2 text-primary"></i>Review Moderation</h5>
+                <p class="text-muted extra-small mb-0 ls-1 text-uppercase">Manage Public Feedback</p>
+            </div>
+            <div class="card-body p-4">
+                <div id="adminReviewContent">
+                    <div class="text-center py-4 text-muted extra-small">Loading system reviews...</div>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer></footer>
+
+    <div class="modal fade" id="globalPopup" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold" id="popupTitle"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body text-muted" id="popupMessage"></div>
+          <div class="modal-footer border-0 pt-0">
+            <div id="popupActions" class="w-100 d-grid gap-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/bookstore.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/admin.js"></script>
+  </body>
+</html>

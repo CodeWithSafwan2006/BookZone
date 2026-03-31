@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" data-page="profile">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Profile — BookZone</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <link rel="stylesheet" href="assets/css/lexi.css" />
+</head>
+
+<body data-page="profile">
+
+  <nav class="navbar navbar-expand-lg navbar-dark px-3 sticky-top">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+      <i class="ri-book-open-fill fs-4"></i>
+      <span>BookZone</span>
+    </a>
+
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <button id="themeToggle" class="btn btn-outline-light btn-sm">
+        <i id="themeIcon" class="ri-moon-line"></i>
+      </button>
+
+      <div id="profileMenu" class="dropdown">
+        <img id="navProfilePic" src="assets/img/default-avatar.png" class="rounded-circle" width="36" height="36" data-bs-toggle="dropdown" style="cursor:pointer;" />
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="profile.html">My Profile</a></li>
+          <li>
+            <button class="dropdown-item text-danger" onclick="BookzoneAuth.logoutUser()">
+              Logout
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div id="toastContainer"></div>
+
+  <section class="container py-5">
+    <div class="mb-4">
+      <a href="javascript:history.back()" class="text-decoration-none d-inline-flex align-items-center gap-1 text-muted hover-primary">
+        <i class="ri-arrow-left-line"></i>
+        <span>Back to Store</span>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-lg-4">
+        <div class="card shadow-soft border-0 p-4 text-center">
+          <div class="position-relative d-inline-block mx-auto mb-3">
+            <img id="profileAvatar" src="assets/img/default-avatar.png" class="rounded-circle" width="120" height="120" style="object-fit: cover; border: 3px solid var(--accent-main);" />
+            <button class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle shadow" onclick="UI.openAvatarPicker()" title="Change Avatar">
+              <i class="ri-pencil-line"></i>
+            </button>
+          </div>
+          <h5 id="profileName" class="fw-bold mb-1 text-main">User</h5>
+          <p id="profileEmail" class="text-muted small mb-0">user@email.com</p>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card shadow-soft border-0 p-4">
+          <div class="d-flex flex-wrap gap-2 mb-4">
+            <button class="btn btn-primary btn-sm" id="btnBookmarks">My Bookmarks</button>
+            <button class="btn btn-outline-secondary btn-sm" id="btnReviews">My Reviews</button>
+            <button class="btn btn-outline-secondary btn-sm" id="btnOrders">Order History</button>
+          </div>
+
+          <div id="bookmarksSection">
+            <div id="bookmarksContainer" class="row g-4"></div>
+            <div id="emptyBookmarks" class="text-center text-muted py-5 d-none">
+              <i class="ri-bookmark-line fs-1 mb-2"></i>
+              <p>No bookmarks saved yet.</p>
+            </div>
+          </div>
+
+          <div id="reviewsSection" class="d-none">
+            <div id="reviewsContainer" class="row g-4"></div>
+          </div>
+
+          <div id="ordersSection" class="d-none">
+            <h6 class="fw-bold mb-3 text-main">Past Purchases & Payment Methods</h6>
+            <div id="orderHistoryContainer">
+                </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="modal fade" id="globalPopup" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow">
+        <div class="modal-header">
+          <h5 class="modal-title" id="popupTitle"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="popupMessage"></div>
+        <div class="modal-footer" id="popupActions"></div>
+      </div>
+    </div>
+  </div>
+<div id="lexi-root">
+  <div id="lexi-overlay"></div>
+
+  <button id="lexi-bubble" aria-label="Open Lexi">
+    💬
+  </button>
+
+  <aside id="lexi-sidebar">
+    <div class="lexi-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <i class="ri-robot-2-line fs-5"></i>
+        <span class="fw-bold">Lexi Assistant</span>
+      </div>
+      <div class="lexi-header-actions d-flex align-items-center gap-2">
+        <button id="lexi-clear" title="Clear Conversation" class="btn btn-link p-0 text-white opacity-75 hover-opacity-100">
+          <i class="ri-delete-bin-line"></i>
+        </button>
+        <button id="lexi-close" title="Close Assistant" class="btn btn-link p-0 text-white">✕</button>
+      </div>
+    </div>
+
+    <div id="lexi-messages"></div>
+
+    <div class="lexi-input">
+      <input
+        type="text"
+        id="lexi-input"
+        placeholder="Ask me for a book or a deal..."
+        autocomplete="off"
+      />
+      <button id="lexi-send" title="Send Message">➤</button>
+    </div>
+  </aside>
+</div>
+  <footer class="p-4 text-center">
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/js/login.js"></script>
+  <script src="assets/js/bookstore.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/cart.js"></script>
+  <script src="assets/js/lexi.js"></script>
+
+  <script>
+    const btnB = document.getElementById('btnBookmarks');
+    const btnR = document.getElementById('btnReviews');
+    const btnO = document.getElementById('btnOrders');
+    const secB = document.getElementById('bookmarksSection');
+    const secR = document.getElementById('reviewsSection');
+    const secO = document.getElementById('ordersSection');
+
+    const sections = [secB, secR, secO];
+    const buttons = [btnB, btnR, btnO];
+
+    function showSection(targetBtn, targetSec) {
+        sections.forEach(s => s.classList.add('d-none'));
+        buttons.forEach(b => {
+            b.classList.remove('btn-primary');
+            b.classList.add('btn-outline-secondary');
+        });
+        
+        targetSec.classList.remove('d-none');
+        targetBtn.classList.add('btn-primary');
+        targetBtn.classList.remove('btn-outline-secondary');
+
+        if (targetSec === secO && typeof window.UI.renderOrderHistory === 'function') {
+            renderOrderHistory(); // Local wrapper call
+        }
+    }
+
+    btnB.onclick = () => showSection(btnB, secB);
+    btnR.onclick = () => showSection(btnR, secR);
+    btnO.onclick = () => showSection(btnO, secO);
+
+    // ✅ UPDATED: Local Order History renderer to include "Buy Again" button
+    function renderOrderHistory() {
+        const user = window.BookzoneAuth?.loadBookzoneUser();
+        const container = document.getElementById("orderHistoryContainer");
+        if (!user || !container) return;
+
+        const history = JSON.parse(localStorage.getItem(`orders_${user.email.toLowerCase()}`)) || [];
+
+        if (history.length === 0) {
+            container.innerHTML = `<p class="text-muted small">No orders found yet.</p>`;
+            return;
+        }
+
+        container.innerHTML = history.map(order => `
+            <div class="card bg-elevated border-0 mb-3 rounded-3 shadow-sm overflow-hidden fade-in-up">
+                <div class="card-header bg-transparent border-bottom d-flex justify-content-between align-items-center py-3">
+                    <div>
+                        <span class="fw-bold text-main small d-block">${order.id}</span>
+                        <span class="text-muted extra-small">${order.date}</span>
+                    </div>
+                    <div class="d-flex gap-2 align-items-center">
+                        <button class="btn btn-primary btn-sm rounded-pill px-3" 
+                                onclick="UI.reorderItems('${order.id}', event)">
+                            <i class="ri-refresh-line me-1"></i> Buy Again
+                        </button>
+                        <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3">${order.status}</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="py-2">
+                        ${order.items.map(i => `
+                            <div class="d-flex justify-content-between extra-small mb-1">
+                                <span class="text-main">${i.title} (x${i.qty})</span>
+                                <span class="text-muted">₹${i.price * i.qty}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-top pt-2 mt-2">
+                        <div class="extra-small text-muted">
+                            <i class="ri-bank-card-line me-1"></i> ${order.paymentMethod}
+                        </div>
+                        <div class="fw-bold text-primary">Total: ₹${order.total}</div>
+                    </div>
+                </div>
+            </div>
+        `).join("");
+    }
+
+    function renderUserReviews() {
+  const container = document.getElementById("reviewsContainer");
+  const user = window.BookzoneAuth?.loadBookzoneUser();
+  if(!user || !container) return;
+
+  const email = user.email.toLowerCase();
+  
+  // 1. Fetch from BOTH storage keys
+  const bookReviews = JSON.parse(localStorage.getItem("bookzone_reviews")) || {};
+  const comicReviews = JSON.parse(localStorage.getItem("bookzone_comic_reviews")) || {};
+  
+  let allUserReviews = [];
+
+  // 2. Collect user's book reviews
+  Object.keys(bookReviews).forEach(id => {
+    bookReviews[id].filter(r => r.userEmail.toLowerCase() === email)
+                  .forEach(r => allUserReviews.push({ ...r, parentId: id, type: 'book' }));
+  });
+
+  // 3. Collect user's comic reviews
+  Object.keys(comicReviews).forEach(id => {
+    comicReviews[id].filter(r => r.userEmail.toLowerCase() === email)
+                   .forEach(r => allUserReviews.push({ ...r, parentId: id, type: 'comic' }));
+  });
+
+  if (allUserReviews.length === 0) {
+    container.innerHTML = "<div class='col-12 text-center py-4 text-muted small'><p>No reviews posted yet.</p></div>";
+    return;
+  }
+
+  // 4. Render COMPACT list (Horizontal layout with minimal padding)
+  container.innerHTML = allUserReviews.map(r => {
+    const book = window.Bookstore.getBookById(r.parentId);
+    const link = r.type === 'comic' ? `comics-series.html?seriesId=${r.parentId}` : `book-details.html?id=${r.parentId}`;
+    
+    return `
+      <div class="col-12 mb-2">
+        <div class="p-2 border rounded-3 bg-light d-flex align-items-center gap-3 animate__animated animate__fadeIn">
+          <img src="${book?.image || 'assets/img/default-book.png'}" 
+               style="width:35px; height:50px; object-fit:contain" class="rounded shadow-sm">
+          
+          <div class="flex-grow-1 overflow-hidden">
+            <div class="d-flex justify-content-between align-items-center">
+              <h6 class="fw-bold mb-0 small text-main text-truncate" style="max-width: 180px;">${book?.title || 'Unknown'}</h6>
+              <span class="badge bg-primary bg-opacity-10 text-primary" style="font-size: 0.55rem; padding: 2px 5px;">${r.type.toUpperCase()}</span>
+            </div>
+            
+            <div class="d-flex align-items-center gap-2">
+              <div class="text-warning" style="font-size: 0.65rem;">
+                ${'★'.repeat(r.stars || 5)}${'☆'.repeat(5 - (r.stars || 5))}
+              </div>
+              <p class="text-secondary mb-0 text-truncate small" style="font-size: 0.75rem; font-style: italic;">"${r.text}"</p>
+            </div>
+          </div>
+
+          <div class="text-end" style="min-width: 60px; border-left: 1px solid #e0e0e0; padding-left: 10px;">
+             <a href="${link}" class="btn btn-link p-0 text-decoration-none fw-bold" style="font-size: 0.7rem;">Open</a>
+             <div class="text-muted" style="font-size: 0.55rem;">${new Date(r.date).toLocaleDateString()}</div>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// ✅ MANDATORY: Ensure clicking the review button triggers this new logic
+document.getElementById('btnReviews').onclick = () => {
+    showSection(document.getElementById('btnReviews'), document.getElementById('reviewsSection'));
+    renderUserReviews(); 
+};
+
+btnR.onclick = () => {
+    showSection(btnR, secR);
+    renderUserReviews();
+};
+
+    window.renderBookmarks = function () {
+      const container = document.getElementById("bookmarksContainer");
+      const emptyState = document.getElementById("emptyBookmarks");
+      const user = window.BookzoneAuth?.loadBookzoneUser();
+      if (!user || !container) return;
+
+      const email = user.email.toLowerCase();
+      const all = JSON.parse(localStorage.getItem("bookzone_bookmarks")) || {};
+      const ids = all[email] || [];
+
+      if (!ids.length) {
+        container.innerHTML = ""; 
+        emptyState?.classList.remove("d-none"); 
+        return;
+      }
+      emptyState?.classList.add("d-none");
+
+      const items = ids.map(id => window.Bookstore.getBookById(id)).filter(Boolean);
+
+      container.innerHTML = items.map(b => {
+        const isComic = b.type === "comic-series" || b.category?.toLowerCase() === "comics";
+        const detailsLink = isComic 
+            ? `comics-series.html?seriesId=${b.id}` 
+            : `book-details.html?id=${b.id}`;
+
+        const priceDisplay = b.isLibrary 
+            ? `₹${b.price} (Offline)` 
+            : (b.price === 0 ? "Free" : "₹" + b.price);
+
+        return `
+          <div class="col-6 col-md-4">
+            <div class="card h-100 border-0 shadow-soft cursor-pointer" onclick="window.location.href='${detailsLink}'">
+              <div class="position-relative">
+                <img src="${b.image}" class="card-img-top">
+                <button class="bookmark-btn active position-absolute top-0 end-0 m-2" onclick="event.stopPropagation(); UI.confirmRemoveBookmark('${b.id}')">
+                  <i class="ri-heart-fill"></i>
+                </button>
+              </div>
+              <div class="card-body p-2">
+                <h6 class="fw-bold text-truncate mb-1 text-main">${b.title}</h6>
+                <p class="text-muted small mb-1">${b.author}</p>
+                <div class="fw-semibold small text-main">
+                  ${priceDisplay}
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = window.BookzoneAuth?.loadBookzoneUser();
+      if (user) {
+        document.getElementById("profileName").textContent = user.name;
+        document.getElementById("profileEmail").textContent = user.email;
+        document.getElementById("profileAvatar").src = user.picture || "assets/img/default-avatar.png";
+        window.renderBookmarks();
+      }
+      if(document.getElementById("year")) document.getElementById("year").textContent = new Date().getFullYear();
+    });
+  </script>
+</body>
+</html>

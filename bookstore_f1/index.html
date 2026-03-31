@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" data-page="home">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BookZone – Your Premium Literary Escape</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icons -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/lexi.css" />
+  </head>
+
+  <body data-page="home">
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-dark px-3 sticky-top">
+      <div
+        class="container-fluid d-flex align-items-center px-4"
+        style="height: 75px"
+      >
+        <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+          <i class="ri-book-open-fill fs-3 text-primary"></i>
+          <span class="fw-bold text-white">BookZone</span>
+        </a>
+
+        <div class="ms-auto d-flex gap-3 align-items-center">
+          <div
+            class="spinner-border spinner-border-sm text-light opacity-25"
+            role="status"
+          ></div>
+        </div>
+      </div>
+    </nav>
+
+    <div id="toastContainer"></div>
+
+    <!-- HERO (Injected by ui.js) -->
+    <header class="page-header"></header>
+
+    <!-- =========================
+         EDITOR'S CHOICE
+    ========================== -->
+    <section class="container py-5 mt-4">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h3 class="fw-bold mb-0 text-main">Editor's Choice</h3>
+          <p class="text-muted small mb-0">
+            Hand-picked masterpieces for your collection.
+          </p>
+        </div>
+
+        <a
+          href="featured.html"
+          class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-semibold"
+        >
+          Explore All <i class="ri-arrow-right-line"></i>
+        </a>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="row g-4" id="featuredList"></div>
+    </section>
+
+    <!-- =========================
+         NEW ARRIVALS
+    ========================== -->
+    <section
+      class="container py-5 my-5"
+    >
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h3 class="fw-bold mb-0 text-main">Fresh Off the Press</h3>
+          <p class="text-muted small mb-0">
+            Be the first to explore our latest releases.
+          </p>
+        </div>
+
+        <a
+          href="new-arrival.html"
+          class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-semibold"
+        >
+          View Trends <i class="ri-arrow-right-line"></i>
+        </a>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="row g-4" id="newArrivalHome"></div>
+    </section>
+
+    <!-- =========================
+         OFFERS
+    ========================== -->
+    <section class="container py-5">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h3 class="fw-bold mb-0 text-main">Limited Time Deals</h3>
+          <p class="text-muted small mb-0">
+            Exclusive savings on global best-sellers.
+          </p>
+        </div>
+
+        <a
+          href="offer.html"
+          class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-semibold"
+        >
+          View All Offers <i class="ri-arrow-right-line"></i>
+        </a>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="row g-4" id="offerListHome"></div>
+    </section>
+
+    <!-- =========================
+         COMICS
+    ========================== -->
+    <section class="container py-5 mb-5 overflow-hidden">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+          <h3 class="fw-bold mb-0 text-main">Manga & Graphic Novels</h3>
+          <p class="text-muted small mb-0">
+            Dive into the world's most vibrant visual storytelling.
+          </p>
+        </div>
+
+        <a
+          href="comics.html"
+          class="btn btn-sm btn-outline-primary rounded-pill px-4 fw-semibold"
+        >
+          Series Catalog <i class="ri-arrow-right-line"></i>
+        </a>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <div class="row g-4" id="comicsHome"></div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="mt-5"></footer>
+
+    <!-- BACK TO TOP -->
+    <button id="backToTop">
+      <i class="ri-arrow-up-line"></i>
+    </button>
+
+    <!-- GLOBAL POPUP -->
+    <div class="modal fade" id="globalPopup" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold" id="popupTitle"></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+
+          <div class="modal-body text-muted py-4" id="popupMessage"></div>
+
+          <div class="modal-footer border-0 pt-0">
+            <div id="popupActions" class="w-100 d-grid gap-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+      
+<div id="lexi-root">
+  <div id="lexi-overlay"></div>
+
+  <button id="lexi-bubble" aria-label="Open Lexi">
+    💬
+  </button>
+
+  <aside id="lexi-sidebar">
+    <div class="lexi-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <i class="ri-robot-2-line fs-5"></i>
+        <span class="fw-bold">Lexi Assistant</span>
+      </div>
+      <div class="lexi-header-actions d-flex align-items-center gap-2">
+        <button id="lexi-clear" title="Clear Conversation" class="btn btn-link p-0 text-white opacity-75 hover-opacity-100">
+          <i class="ri-delete-bin-line"></i>
+        </button>
+        <button id="lexi-close" title="Close Assistant" class="btn btn-link p-0 text-white">✕</button>
+      </div>
+    </div>
+
+    <div id="lexi-messages"></div>
+
+    <div class="lexi-input">
+      <input
+        type="text"
+        id="lexi-input"
+        placeholder="Ask me for a book or a deal..."
+        autocomplete="off"
+      />
+      <button id="lexi-send" title="Send Message">➤</button>
+    </div>
+  </aside>
+</div>
+
+    <!-- JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/bookstore.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/lexi.js"></script>
+  </body>
+</html>

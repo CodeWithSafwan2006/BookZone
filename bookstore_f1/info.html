@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en" data-page="info">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Information — BookZone</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/styles.css" />
+
+    <style>
+      /* ✅ PREMIUM CSS INTEGRATION */
+      body {
+        background-color: var(--bg-main);
+        transition: background 0.3s ease;
+      }
+
+      /* 📄 SPECIFIC FIX FOR INFO.HTML REDIRECTS */
+
+/* Use the body data-page attribute or the specific container ID */
+body.dark-mode[data-page="info"],
+body.dark-mode .info-page-container {
+    background-color: #0b0e14 !important; /* Deep navy background */
+}
+
+/* Target the main content card inside info.html */
+body.dark-mode .info-card,
+body.dark-mode .about-section,
+body.dark-mode .policy-container {
+    background-color: #161b22 !important; /* Professional dark card color */
+    border: 1px solid #30363d !important; /* Sharp, subtle border */
+    color: #f1f5f9 !important; /* Bright, readable text */
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Fix Headings specifically for this page */
+body.dark-mode .info-card h1,
+body.dark-mode .info-card h2 {
+    color: #6366f1 !important; /* Brand Indigo/Purple accent */
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 15px;
+}
+
+/* Fix the "Return to Store" or "Back" buttons in dark mode */
+body.dark-mode .info-card .btn-outline-primary,
+body.dark-mode .info-card .back-link {
+    color: #ffffff !important;
+    border-color: #6366f1 !important;
+    background-color: transparent;
+}
+
+body.dark-mode .info-card .btn-outline-primary:hover {
+    background-color: #6366f1 !important;
+    color: white !important;
+}
+      .info-card {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border-subtle);
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        margin-bottom: 5rem; /* Gap for footer */
+      }
+
+      .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+      }
+
+      #infoTitle {
+        background: linear-gradient(45deg, var(--accent-main), #6c5ce7);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.5px;
+        display: inline-block;
+        text-decoration: none !important;
+        border: none !important;
+      }
+
+      #infoContent {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: var(--text-secondary);
+      }
+
+      #infoContent strong {
+        color: var(--accent-main); /* Highlight key terms */
+      }
+
+      .btn-pill {
+        border-radius: 50px;
+        padding: 10px 30px;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+      }
+
+      /* Smooth Entry Animation */
+      .fade-in-up {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      body.dark-mode .info-card {
+        background: rgba(30, 41, 59, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark px-3 sticky-top"></nav>
+
+    <div id="toastContainer"></div>
+
+    <section class="container py-5 mt-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8 info-card p-5 fade-in-up">
+          <h2 id="infoTitle" class="fw-bold mb-3"></h2>
+
+          <div id="infoContent"></div>
+
+          <hr class="my-4 opacity-25" />
+
+          <div class="text-center">
+            <a href="index.html" class="btn btn-outline-primary btn-pill px-4"
+              >Return to Store</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/bookstore.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/ui.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const params = new URLSearchParams(window.location.search);
+        const type = params.get("type") || "about";
+
+        const data = {
+          about: {
+            title: "About BookZone",
+            text: `<strong>BookZone</strong> is a high-fidelity, front-end-driven e-commerce platform designed for bibliophiles and comic enthusiasts. Founded in 2026, we bridge the gap between traditional reading and digital convenience. <br><br> Our platform features a massive inventory of over 100 programmatically generated titles and exclusive manga series. We pride ourselves on our sophisticated simulated backend, which manages authentication and transactions through persistent browser storage to provide a seamless user experience.`,
+          },
+          careers: {
+            title: "Work with Us",
+            text: `Join the team behind the <strong>Omni-Fix</strong> premium theme and the <strong>Lexi AI Assistant</strong>. We are currently seeking innovative minds to help scale our front-end architecture and AI integration. <br><br> <strong>Open Roles:</strong><br> • <strong>Software Engineers:</strong> Focus on ES6+ logic and secure data persistence.<br> • <strong>UI/UX Designers:</strong> Enhance our premium CSS variables and animation systems.<br> • <strong>Data Scientists:</strong> Optimize our inventory engines and recommendation algorithms. <br><br> Email your CV and portfolio to <strong>careers@bookzone.com</strong>.`,
+          },
+          vision: {
+            title: "Our Vision",
+            text: `Our vision is to define the future of digital book collecting. By leveraging modern web technologies like <strong>SHA-256 encryption</strong> and <strong>dynamic UI orchestrators</strong>, we provide a safe and immersive environment for readers. <br><br> We believe in social proofing; our community-driven "helpfulness" voting and verified buyer badges ensure that every reader finds their next favorite story through trusted peer reviews.`,
+          },
+          sell: {
+            title: "Sell on BookZone",
+            text: `Expand your reach with the <strong>BookZone Merchant Dashboard</strong>. Our administrative control layer allows sellers to manage product availability and monitor customer feedback in real-time. <br><br> Whether you are an independent bookstore or a major distributor, our platform provides the tools needed to toggle visibility and activate festival-wide discounts instantly. This portal is currently in private beta for select partners.`,
+          },
+          affiliate: {
+            title: "Affiliate Program",
+            text: `Partner with a premium bookstore brand. Our affiliate program offers competitive commissions for every successful referral tracked through our persistent storage engine. <br><br> Affiliates gain access to exclusive marketing assets and real-time tracking dashboards. Official launch is scheduled for Q3 2026.`,
+          },
+          author: {
+            title: "Author Publishing",
+            text: `We empower creators to distribute their stories directly to enthusiasts worldwide. Our upcoming self-publishing suite will support both standard prose and specialized <strong>Comic Series</strong> relationships. <br><br> Authors will benefit from our premium review system and dedicated detail pages that highlight their work with high-fidelity visuals.`,
+          },
+          returns: {
+            title: "Return Policy",
+            text: `We strive for total customer satisfaction across our diverse catalog. Our return policy is managed through a transparent transaction history system. <br><br>
+           • <strong>Physical Collectibles:</strong> 7-day hassle-free return period for all physical editions.<br> 
+           • <strong>Digital Library (Free):</strong> These titles are provided at no cost for online reading. Once accessed, they are added to your <strong>Reading History</strong> for your convenience.<br>
+           • <strong>Paid Digital Editions:</strong> For premium titles, once the reading session has begun or the item is added to your history, it is considered "consumed" and is non-refundable.<br>
+           • <strong>Refunds:</strong> All eligible refunds are processed instantly to your simulated payment method upon approval.`,
+          },
+          support: {
+            title: "Customer Service",
+            text: `Our support infrastructure is built for speed and clarity. For immediate assistance, engage with our <strong>Lexi AI Assistant</strong>, capable of providing personalized recommendations and navigational help. <br><br> For complex account issues, including SHA-256 password resets or order history discrepancies, please contact <strong>support@bookzone.com</strong>. Our average response time is under 72 hours.`,
+          },
+        };
+
+        const pageData = data[type] || data.about;
+        document.getElementById("infoTitle").innerText = pageData.title;
+        document.getElementById("infoContent").innerHTML = pageData.text; // ✅ Uses innerHTML for paragraphs
+
+        // ✅ INITIALIZE NAV & FOOTER
+        if (window.UI && UI.syncNavbar) UI.syncNavbar();
+        if (typeof injectFooter === "function") injectFooter();
+      });
+    </script>
+  </body>
+</html>

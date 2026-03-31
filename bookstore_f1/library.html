@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en" data-page="library">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>The Library – BookZone</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <link rel="stylesheet" href="assets/css/lexi.css" />
+    <style>
+      .btn-remove-reading {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        width: 28px;
+        height: 28px;
+        background: rgba(255, 77, 77, 0.9);
+        color: white;
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        z-index: 100;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+      }
+
+      .btn-remove-reading:hover {
+        transform: scale(1.15) rotate(90deg);
+        background: #ff0000;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.4);
+      }
+    </style>
+  </head>
+
+  <body data-page="library">
+    <nav class="navbar navbar-expand-lg navbar-dark px-3 sticky-top">
+      <div
+        class="container-fluid d-flex align-items-center px-4"
+        style="height: 75px"
+      >
+        <a
+          class="navbar-brand d-flex align-items-center gap-2"
+          href="index.html"
+        >
+          <i class="ri-book-open-fill fs-3 text-primary"></i
+          ><span class="fw-bold text-white">BookZone</span>
+        </a>
+        <div class="ms-auto d-flex gap-3 align-items-center">
+          <div
+            class="spinner-border spinner-border-sm text-light opacity-25"
+            role="status"
+          ></div>
+        </div>
+      </div>
+    </nav>
+
+    <div id="toastContainer"></div>
+
+    <!-- ✅ HERO PLACEHOLDER -->
+    <header class="page-header"></header>
+
+    <section class="container py-5">
+      <div
+        id="libraryDashboard"
+        class="mb-5 d-none animate__animated animate__fadeIn"
+      >
+        <div class="d-flex align-items-center mb-4 gap-3">
+          <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary">
+            <i class="ri-history-line fs-4"></i>
+          </div>
+          <div>
+            <h4 class="fw-bold mb-0 text-main">Finish Reading</h4>
+            <p class="text-muted small mb-0">
+              Pick up exactly where you left off.
+            </p>
+          </div>
+        </div>
+
+        <div id="libraryDashboardContainer" class="row g-4"></div>
+        <hr class="mt-5 opacity-10" />
+      </div>
+      <div class="row g-4" id="libraryBooksContainer"></div>
+    </section>
+
+    <div class="modal fade" id="offlineConfirmModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold">Offline Purchase</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body text-muted py-4" id="offlineModalBody"></div>
+          <div class="modal-footer border-0 pt-0">
+            <div class="w-100 d-grid gap-2">
+              <button
+                type="button"
+                class="btn btn-primary py-2 fw-bold rounded-pill"
+                id="confirmOfflineBtn"
+              >
+                Add to Cart
+              </button>
+              <button
+                type="button"
+                class="btn btn-link btn-sm text-muted text-decoration-none"
+                data-bs-dismiss="modal"
+              >
+                Keep Reading Online
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="lexi-root">
+  <div id="lexi-overlay"></div>
+
+  <button id="lexi-bubble" aria-label="Open Lexi">
+    💬
+  </button>
+
+  <aside id="lexi-sidebar">
+    <div class="lexi-header d-flex justify-content-between align-items-center">
+      <div class="d-flex align-items-center gap-2">
+        <i class="ri-robot-2-line fs-5"></i>
+        <span class="fw-bold">Lexi Assistant</span>
+      </div>
+      <div class="lexi-header-actions d-flex align-items-center gap-2">
+        <button id="lexi-clear" title="Clear Conversation" class="btn btn-link p-0 text-white opacity-75 hover-opacity-100">
+          <i class="ri-delete-bin-line"></i>
+        </button>
+        <button id="lexi-close" title="Close Assistant" class="btn btn-link p-0 text-white">✕</button>
+      </div>
+    </div>
+
+    <div id="lexi-messages"></div>
+
+    <div class="lexi-input">
+      <input
+        type="text"
+        id="lexi-input"
+        placeholder="Ask me for a book or a deal..."
+        autocomplete="off"
+      />
+      <button id="lexi-send" title="Send Message">➤</button>
+    </div>
+  </aside>
+</div>
+
+    <div class="modal fade" id="globalPopup" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="modal-header border-0 pb-0">
+            <h5 class="modal-title fw-bold" id="popupTitle"></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body text-muted py-4" id="popupMessage"></div>
+          <div class="modal-footer border-0 pt-0">
+            <div id="popupActions" class="w-100 d-grid gap-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer></footer>
+
+    <button id="backToTop">
+      <i class="ri-arrow-up-line"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/bookstore.js"></script>
+    <script src="assets/js/login.js"></script>
+    <script src="assets/js/cart.js"></script>
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/lexi.js"></script>
+
+    <script>
+      window.renderLibraryDashboard = function () {
+        const container = document.getElementById("libraryDashboardContainer");
+        const section = document.getElementById("libraryDashboard");
+        if (!container || !section) return;
+
+        const list =
+          JSON.parse(localStorage.getItem("bookzone_continue_reading")) || [];
+
+        if (list.length === 0) {
+          section.classList.add("d-none");
+          return;
+        }
+
+        section.classList.remove("d-none");
+
+        container.innerHTML = list
+          .map((item) => {
+            const bookId = typeof item === "object" ? item.id : item;
+            const book = window.Bookstore.getBookById(bookId);
+            if (!book) return "";
+
+            return `
+              <div class="col-6 col-md-3">
+                <div class="card h-100 border-0 shadow-soft p-2 cursor-pointer position-relative"
+                     onclick="window.open('${book.readUrl}', '_blank')">
+                  <button class="btn-remove-reading" onclick="UI.removeFromReading('${book.id}', event)">
+                    <i class="ri-close-line"></i>
+                  </button>
+                  <div class="continue-badge">Finish Reading</div>
+                  <img src="${book.image}" class="card-img-top rounded" style="height:140px;object-fit:contain" onerror="this.src='assets/img/default-book.png'">
+                  <div class="card-body p-2 text-center">
+                    <div class="fw-bold small text-truncate text-main">${book.title}</div>
+                  </div>
+                </div>
+              </div>`;
+          })
+          .join("");
+      };
+
+      document.addEventListener("DOMContentLoaded", () => {
+        window.renderLibraryDashboard();
+
+        const container = document.getElementById("libraryBooksContainer");
+        if (container) {
+          const books = window.Bookstore.getLibraryBooks();
+          if (books.length) {
+            container.innerHTML = books
+              .map((book) => UI.createBookCard(book))
+              .join("");
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

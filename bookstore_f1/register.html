@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Create Account — BookZone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="assets/css/styles.css" />
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+
+      .auth-wrapper {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .auth-card {
+        width: 100%;
+        max-width: 440px;
+        border-radius: 14px;
+        box-shadow: 0 12px 45px rgba(0, 0, 0, 0.08);
+      }
+    </style>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-dark px-3">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="index.html">
+        <i class="ri-book-open-fill fs-4"></i>
+        <span class="fw-semibold">BookZone</span>
+      </a>
+    </nav>
+
+    <div class="auth-wrapper px-3">
+      <div class="card auth-card border-0 p-4">
+        <h3 class="fw-bold text-center mb-1">Create Account</h3>
+        <p class="text-muted text-center mb-4">
+          Join BookZone to start reading & collecting
+        </p>
+
+        <div class="mb-3">
+          <label class="form-label">Full Name</label>
+          <input
+            id="signupName"
+            type="text"
+            class="form-control"
+            placeholder="Your full name"
+            name="signup-name"
+            autocomplete="name"
+            autocapitalize="words"
+            spellcheck="false"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input
+            id="signupEmail"
+            type="email"
+            class="form-control"
+            placeholder="example@gmail.com"
+            name="signup-email"
+            autocomplete="username"
+            autocapitalize="none"
+            autocorrect="off"
+            spellcheck="false"
+          />
+        </div>
+
+        <div class="mb-3">
+  <label class="form-label">Password</label>
+
+  <input
+    id="signupPassword"
+    type="password"
+    class="form-control"
+    placeholder="Create a password"
+  />
+
+  <!-- PASSWORD REQUIREMENT LINE (NEW) -->
+  <div id="signupPasswordHint" class="password-requirement">
+    <b>8–15 chars • Uppercase • Lowercase • Special character</b>
+</div>
+
+
+</div>
+
+
+        <div class="mb-2">
+          <label class="form-label">Confirm Password</label>
+          <input
+            id="signupConfirmPassword"
+            type="password"
+            class="form-control"
+            placeholder="Re-enter password"
+            name="signup-confirm-password"
+            autocomplete="new-password"
+          />
+        </div>
+
+        <div class="mb-3">
+          <small class="text-muted">
+            Passwords are <strong>case-sensitive</strong>
+          </small>
+        </div>
+
+        <button
+          id="signupBtn"
+          class="btn btn-primary w-100 py-2 fw-semibold mt-2"
+        >
+          Create Account
+        </button>
+
+        <div class="text-center small mt-3">
+          Already have an account?
+          <a href="login.html" class="fw-semibold">Sign In</a>
+        </div>
+      </div>
+    </div>
+
+    <div id="toastContainer"></div>
+
+    <div class="modal fade" id="globalPopup" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+          <div class="modal-header">
+            <h5 class="modal-title" id="popupTitle"></h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body" id="popupMessage"></div>
+          <div class="modal-footer" id="popupActions"></div>
+        </div>
+      </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="assets/js/ui.js"></script>
+    <script src="assets/js/login.js"></script>
+    
+    <script src="assets/js/cart.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // 2. Force the UI to check for the guest cart items on page load
+            if (window.UI) {
+                UI.syncNavbar();
+                UI.updateCartCount();
+            }
+
+            // Optional: Auto-focus the name field
+            document.getElementById("signupName")?.focus();
+        });
+    </script>
+  </body>
+</html>
