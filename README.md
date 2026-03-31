@@ -58,15 +58,6 @@ cd BookZone
 
 ---
 
-## 📸 Screenshots
-
-(Add screenshots of your website here)
-
----
-
-## 🌐 Live Demo
-
-(Add your deployed link here - Netlify / Vercel / etc.)
 
 ---
 
@@ -77,11 +68,7 @@ cd BookZone
 * GitHub: [https://github.com/CodeWithSafwan2006](https://github.com/CodeWithSafwan2006)
 * LinkedIn: [https://www.linkedin.com/in/safwan-qureshi-a8b2823ba/](https://www.linkedin.com/in/safwan-qureshi-a8b2823ba/)
 
----
-
-## 📌 Description (Short - 350 chars)
-
-BookZone is a responsive online bookstore website where users can explore, search, and browse books with a clean and user-friendly interface. Built using modern web technologies, it showcases front-end development skills and provides a smooth browsing experience.
+--
 
 ---
 
